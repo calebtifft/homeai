@@ -1,0 +1,35 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "environment": "development"
+    },
+    "preview": {
+      "distribution": "internal",
+      "environment": "preview",
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "EXPO_PUBLIC_LEGAL_PRIVACY_URL": "https://homeai-website.vercel.app/#privacy",
+        "EXPO_PUBLIC_LEGAL_TERMS_URL": "https://homeai-website.vercel.app/#terms"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "environment": "production",
+      "env": {
+        "EXPO_PUBLIC_LEGAL_PRIVACY_URL": "https://homeai-website.vercel.app/#privacy",
+        "EXPO_PUBLIC_LEGAL_TERMS_URL": "https://homeai-website.vercel.app/#terms"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

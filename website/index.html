@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeAI — AI virtual staging for interiors, exteriors & walls</title>
+    <meta
+      name="description"
+      content="Turn empty rooms into listing-ready photos. HomeAI stages interiors, exteriors, and walls with AI — on your iPhone or Android."
+    />
+    <link rel="icon" href="assets/icon.png" type="image/png" />
+    <style>
+      :root {
+        --bg: #faf9f5;
+        --surface: #ffffff;
+        --text: #2b2e26;
+        --muted: #575c52;
+        --primary: #348f68;
+        --primary-dark: #2b7856;
+        --line: #e4e6df;
+        --radius: 12px;
+        --max: 720px;
+        --wide: 960px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.6;
+        font-size: 16px;
+      }
+
+      a {
+        color: var(--primary-dark);
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .wrap {
+        width: min(var(--wide), 92vw);
+        margin: 0 auto;
+      }
+
+      .wrap-narrow {
+        width: min(var(--max), 92vw);
+        margin: 0 auto;
+      }
+
+      /* Header */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(250, 249, 245, 0.92);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(8px);
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 0;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+
+      .logo img {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        justify-content: flex-end;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      nav a:hover {
+        color: var(--primary-dark);
+      }
+
+      /* Hero */
+      .hero {
+        padding: 56px 0 48px;
+        text-align: center;
+      }
+
+      .hero-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        margin: 0 auto 20px;
+        box-shadow: 0 4px 16px rgba(43, 46, 38, 0.08);
+      }
+
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 5vw, 40px);
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        font-weight: 700;
+        max-width: 16ch;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero p {
+        margin: 0 auto 28px;
+        max-width: 42ch;
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      .stores {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .store-btn {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 18px;
+        border-radius: 10px;
+        background: #111;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        min-width: 150px;
+      }
+
+      .store-btn span {
+        font-size: 11px;
+        font-weight: 400;
+        opacity: 0.75;
+      }
+
+      /* Features */
+      .section {
+        padding: 48px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        margin: 0 0 8px;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+
+      .section-sub {
+        text-align: center;
+        margin: 0 auto 32px;
+        color: var(--muted);
+        font-size: 15px;
+        max-width: 40ch;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        align-items: stretch;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow:
+          0 1px 2px rgba(43, 46, 38, 0.04),
+          0 8px 24px rgba(43, 46, 38, 0.06);
+        border: 1px solid rgba(228, 230, 223, 0.9);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      @media (hover: hover) {
+        .card:hover {
+          transform: translateY(-3px);
+          box-shadow:
+            0 2px 4px rgba(43, 46, 38, 0.05),
+            0 14px 32px rgba(43, 46, 38, 0.1);
+        }
+      }
+
+      .card-media {
+        position: relative;
+        overflow: hidden;
+        background: #eef0ea;
+      }
+
+      .card-media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 55%,
+          rgba(43, 46, 38, 0.18) 100%
+        );
+        pointer-events: none;
+      }
+
+      .card-tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 1;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--primary-dark);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 2px 8px rgba(43, 46, 38, 0.08);
+      }
+
+      .card img {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+      }
+
+      .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 18px 20px 22px;
+        border-top: 1px solid var(--line);
+      }
+
+      .card-body h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+      }
+
+      .card-body p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      /* Steps */
+      .steps {
+        display: grid;
+        gap: 12px;
+        max-width: var(--max);
+        margin: 0 auto;
+      }
+
+      .step {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+      }
+
+      .step-num {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .step h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+      }
+
+      .step p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      /* Contact strip */
+      .contact {
+        text-align: center;
+        padding: 32px 20px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        margin-bottom: 48px;
+      }
+
+      .contact p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      /* Legal */
+      .legal {
+        padding: 40px 0 56px;
+        border-top: 1px solid var(--line);
+      }
+
+      .legal-block {
+        margin-bottom: 48px;
+      }
+
+      .legal-block:last-child {
+        margin-bottom: 0;
+      }
+
+      .legal-block h2 {
+        margin: 0 0 4px;
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+
+      .legal-block .updated {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .legal-block h3 {
+        margin: 24px 0 8px;
+        font-size: 16px;
+      }
+
+      .legal-block p,
+      .legal-block li {
+        font-size: 15px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .legal-block ul {
+        margin: 0 0 12px;
+        padding-left: 20px;
+      }
+
+      /* FAQ */
+      .faq-list {
+        display: grid;
+        gap: 10px;
+        max-width: var(--max);
+        margin: 0 auto;
+      }
+
+      .faq {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+      }
+
+      .faq h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+
+      .faq p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      footer {
+        text-align: center;
+        padding: 24px 16px 40px;
+        font-size: 13px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+      }
+
+      @media (max-width: 820px) {
+        .cards {
+          grid-template-columns: 1fr;
+          max-width: 360px;
+          margin: 0 auto;
+        }
+      }
+
+      @media (max-width: 600px) {
+        nav {
+          gap: 4px 12px;
+        }
+
+        nav a {
+          font-size: 13px;
+        }
+
+        .hero {
+          padding-top: 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap header-inner">
+        <a class="logo" href="#top">
+          <img src="assets/icon.png" alt="" width="36" height="36" />
+          HomeAI
+        </a>
+        <nav>
+          <a href="#features">Features</a>
+          <a href="#privacy">Privacy</a>
+          <a href="#terms">Terms</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero wrap-narrow">
+        <img
+          class="hero-icon"
+          src="assets/icon.png"
+          alt="HomeAI app icon"
+          width="72"
+          height="72"
+        />
+        <h1>Listing-ready photos in seconds</h1>
+        <p>
+          Upload a room photo. Pick a style. HomeAI generates virtually staged
+          interiors, exteriors, and wall refreshes with AI.
+        </p>
+        <div class="stores">
+          <a class="store-btn" href="#" aria-label="Download on the App Store">
+            <span>Download on the</span>
+            App Store
+          </a>
+          <a class="store-btn" href="#" aria-label="Get it on Google Play">
+            <span>Get it on</span>
+            Google Play
+          </a>
+        </div>
+      </section>
+
+      <section class="section wrap" id="features">
+        <h2 class="section-title">Three ways to design</h2>
+        <p class="section-sub">One app for rooms, facades, and wall treatments.</p>
+        <div class="cards">
+          <article class="card">
+            <div class="card-media">
+              <span class="card-tag">Interior</span>
+              <img
+                src="assets/interior-design.jpg"
+                alt="Interior virtual staging example"
+                width="640"
+                height="800"
+                loading="lazy"
+              />
+            </div>
+            <div class="card-body">
+              <h3>Interior staging</h3>
+              <p>
+                Furnish empty rooms with modern, luxe, coastal, and other styles
+                — ready for listings and client previews.
+              </p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-media">
+              <span class="card-tag">Exterior</span>
+              <img
+                src="assets/exterior-design.jpg"
+                alt="Exterior design example"
+                width="640"
+                height="800"
+                loading="lazy"
+              />
+            </div>
+            <div class="card-body">
+              <h3>Exterior design</h3>
+              <p>
+                Refresh facades, yards, and curb appeal with AI-generated exterior
+                styling options.
+              </p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-media">
+              <span class="card-tag">Walls</span>
+              <img
+                src="assets/wall.jpg"
+                alt="Wall refresh example"
+                width="640"
+                height="800"
+                loading="lazy"
+              />
+            </div>
+            <div class="card-body">
+              <h3>New walls</h3>
+              <p>
+                Try paint, wallpaper, paneling, tile, or a custom prompt — without
+                picking up a brush.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section wrap-narrow">
+        <h2 class="section-title">How it works</h2>
+        <p class="section-sub">No account required. Open the app and start.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <h3>Upload a photo</h3>
+              <p>Take a picture or choose one from your library.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <h3>Configure your look</h3>
+              <p>Select room type, style, or wall treatment — then generate.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <h3>Save and share</h3>
+              <p>Compare before/after, save to Photos, or share your result.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap-narrow" id="contact">
+        <div class="contact">
+          <p>
+            Questions or support —
+            <a href="mailto:homeai.m@outlook.com">homeai.m@outlook.com</a>
+          </p>
+        </div>
+      </section>
+
+      <div class="legal wrap-narrow">
+        <article class="legal-block" id="privacy">
+          <h2>Privacy Policy</h2>
+          <p class="updated">Last updated: June 1, 2026</p>
+          <p>
+            HomeAI provides a mobile app that uses AI to generate virtually staged
+            images. This policy explains what we collect and how we use it.
+          </p>
+
+          <h3>Information we collect</h3>
+          <ul>
+            <li>
+              <strong>Photos you provide</strong> — processed only to generate your
+              staged result.
+            </li>
+            <li>
+              <strong>Device data</strong> — a per-install identifier for history,
+              usage limits, and optional backup.
+            </li>
+            <li>
+              <strong>Anonymous session</strong> — if online backup is enabled, for
+              private storage tied to your install (no email login required).
+            </li>
+            <li>
+              <strong>Purchases</strong> — subscription status via Apple, Google,
+              and RevenueCat (not full payment details).
+            </li>
+            <li>
+              <strong>Support email</strong> — what you send when you contact us.
+            </li>
+          </ul>
+
+          <h3>How we use it</h3>
+          <ul>
+            <li>Generate and display staged images</li>
+            <li>Save history on device and optional private cloud backup</li>
+            <li>Enforce free-tier limits and unlock Pro for subscribers</li>
+            <li>Respond to support requests</li>
+          </ul>
+          <p>
+            We do <strong>not</strong> use your photos to train public AI models or
+            sell your images.
+          </p>
+
+          <h3>Your choices</h3>
+          <ul>
+            <li>Delete history items in the app</li>
+            <li>Manage subscriptions in device settings</li>
+            <li>Email us with privacy questions</li>
+          </ul>
+
+          <h3>Contact</h3>
+          <p>
+            <a href="mailto:homeai.m@outlook.com">homeai.m@outlook.com</a>
+          </p>
+        </article>
+
+        <article class="legal-block" id="terms">
+          <h2>Terms of Service</h2>
+          <p class="updated">Last updated: June 1, 2026</p>
+          <p>
+            By using HomeAI you agree to these Terms. AI results are illustrative
+            only — you are responsible for how you use generated images.
+          </p>
+
+          <h3>Your content</h3>
+          <ul>
+            <li>You keep ownership of photos you upload.</li>
+            <li>
+              You grant us a limited license to process them for the service and
+              support.
+            </li>
+            <li>You confirm you have the right to use each photo you upload.</li>
+          </ul>
+
+          <h3>Subscriptions</h3>
+          <ul>
+            <li>Billing is through the App Store or Google Play.</li>
+            <li>
+              Subscriptions auto-renew unless canceled before the period ends.
+              Manage in your account settings.
+            </li>
+            <li>Refunds follow Apple or Google policies.</li>
+          </ul>
+
+          <h3>Acceptable use</h3>
+          <p>
+            Do not upload unlawful content, abuse limits, or misrepresent AI output
+            as guaranteed real-world work.
+          </p>
+
+          <h3>Disclaimer</h3>
+          <p>
+            The app and AI outputs are provided “as is” without warranties. Our
+            liability is limited to the extent permitted by law.
+          </p>
+
+          <h3>Contact</h3>
+          <p>
+            <a href="mailto:homeai.m@outlook.com">homeai.m@outlook.com</a>
+          </p>
+        </article>
+
+        <section class="legal-block" id="faq">
+          <h2 class="section-title" style="text-align: left">FAQ</h2>
+          <div class="faq-list">
+            <article class="faq">
+              <h3>Do I need an account?</h3>
+              <p>
+                No. The app works on your device without sign-in. Optional backup
+                uses an anonymous session.
+              </p>
+            </article>
+            <article class="faq">
+              <h3>How are my photos used?</h3>
+              <p>
+                Only to generate your staged image. Not used to train public models.
+              </p>
+            </article>
+            <article class="faq">
+              <h3>Is there a free tier?</h3>
+              <p>
+                Yes — a limited number of staging runs per day. Pro removes the
+                limit.
+              </p>
+            </article>
+            <article class="faq">
+              <h3>How do I restore a purchase?</h3>
+              <p>
+                Settings → Subscription plans → Restore purchases (via your App
+                Store or Google Play account).
+              </p>
+            </article>
+            <article class="faq">
+              <h3>Need help?</h3>
+              <p>
+                <a href="mailto:homeai.m@outlook.com">homeai.m@outlook.com</a> or Contact
+                support in the app.
+              </p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>© 2026 HomeAI</footer>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h b/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
+index 0000000..0000000 100644
+--- a/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
++++ b/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
+@@ -9,6 +9,8 @@
+ #pragma once
+ 
+ #include <array>
++#include <cstdio>
++#include <string>
+ #include <unordered_map>
+ 
+ #include <glog/logging.h>
+@@ -71,14 +71,22 @@
+     case YGUnitMaxContent:
+       return "max-content";
+     case YGUnitFitContent:
+       return "fit-content";
+     case YGUnitStretch:
+       return "stretch";
+     case YGUnitPoint:
+       return dimension.value;
+-    case YGUnitPercent:
+-      return std::format("{}%", dimension.value);
++    case YGUnitPercent: {
++      // Avoid std::format here: Android NDK libc++ may not provide it for this toolchain.
++      std::array<char, 64> percentBuf{};
++      std::snprintf(
++          percentBuf.data(),
++          percentBuf.size(),
++          "%g%%",
++          static_cast<double>(dimension.value));
++      return std::string(percentBuf.data());
++    }
+   }
+ 
+   return nullptr;
+ }

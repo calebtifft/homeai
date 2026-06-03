@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "HomeAI",
+    "slug": "homeai",
+    "scheme": "homeai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f1419"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "HomeAI needs camera access to take room photos for staging.",
+        "NSPhotoLibraryUsageDescription": "HomeAI needs access to your photos to stage your room images.",
+        "NSPhotoLibraryAddUsageDescription": "HomeAI saves your staged room image to your photo library when you tap Save to Photos.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.homeai.aihomedesign"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f1419"
+      },
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
+      ],
+      "package": "com.homeai.aihomedesign"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "HomeAI needs access to your photos to stage your room images.",
+          "cameraPermission": "HomeAI needs camera access to take room photos for staging.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "HomeAI needs access to your photos to stage your room images.",
+          "savePhotosPermission": "Allow HomeAI to save staged images to your gallery.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      "expo-asset",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0f1419",
+          "sounds": []
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "37dedcb9-f251-4896-88ba-3c9ef9092540"
+      }
+    },
+    "owner": "markthomass-organization"
+  }
+}

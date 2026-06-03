@@ -1,0 +1,21 @@
+/** Shared badge / modal colors — separate module avoids Fast Refresh stale const refs. */
+export const subscriptionBadgeTheme = {
+  freeBg: "#D7EFE4",
+  freeBorder: "#2F6F52",
+  freeFg: "#1B5E44",
+  proBg: "#FFF3D6",
+  proBorder: "#FFB300",
+  proFg: "#E65100",
+  proModalGradient: ["#FFF8EE", "#FFE4A8", "#FFCC66"] as const,
+  proModalGradientDark: ["#1E1A14", "#2E2618", "#3D3220"] as const,
+  lifetimeModalGradient: ["#FFFCF5", "#FFE9A8", "#E8B84A"] as const,
+  lifetimeModalGradientDark: ["#141008", "#2A2008", "#453510"] as const,
+  lifetimeGradient: ["#FFF8E1", "#FFE082", "#FFC107"] as const,
+  lifetimeGradientDark: ["#3D2E00", "#5C4500", "#7A5C00"] as const,
+  lifetimeIconLight: "#B8860B",
+  lifetimeIconDark: "#FFD54F",
+  lifetimeMedallion: ["#FFFDE7", "#FFD54F", "#FFA000"] as const,
+  lifetimeMedallionDark: ["#5C4500", "#8D6E00", "#FFB300"] as const,
+  freeModalGradient: ["#FFF9E8", "#FFE8F2", "#FFD6EB"] as const,
+  upgradeGradient: ["#FF5C38", "#EE4A72", "#D81B7A"] as const,
+};
