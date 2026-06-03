@@ -117,7 +117,7 @@ esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
-# StageAI: macOS + Homebrew JDK when JAVA_HOME is unset (Gradlew must find java before gradle.properties).
+# HomeAI: macOS + Homebrew JDK when JAVA_HOME is unset (Gradlew must find java before gradle.properties).
 if [ -z "$JAVA_HOME" ] && $darwin ; then
     if [ -x "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/java" ] ; then
         JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
