@@ -537,9 +537,8 @@ export function ProcessingScreen({ route, navigation }: Props) {
         const { title, message } = formatStagingError(e, languageIdRef.current);
         const tr = tRef.current;
         const nav = navigationRef.current;
-        if (__DEV__) {
-          console.warn("[HomeAI] Processing failed:", e);
-        }
+        const errDetail = e instanceof Error ? e.message : String(e ?? "unknown");
+        console.error("[HomeAI] Processing failed:", errDetail, e);
         Alert.alert(title, message, [
           { text: tr("common.ok"), onPress: () => leaveProcessing(nav) },
         ]);

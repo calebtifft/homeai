@@ -668,6 +668,9 @@ export const STRINGS_EN = {
   "error.stagingPhotoFormatTitle": "Photo format not supported",
   "error.stagingPhotoFormatBody":
     "HomeAI could not read this image (AVIF, HEIC, TIFF, and other formats are converted automatically). Try another photo, take a new picture in the app, or export as JPEG from your library.",
+  "error.stagingConfigTitle": "Staging not configured",
+  "error.stagingConfigBody":
+    "This build is missing the Replicate API token. Add EXPO_PUBLIC_REPLICATE_API_TOKEN to .env in the project root, then in Xcode choose Product → Clean Build Folder and build again.",
   "error.stagingGenericTitle": "Staging failed",
   "error.stagingGenericBody":
     "Something went wrong. Please try again. If it keeps happening, contact support from Settings.",

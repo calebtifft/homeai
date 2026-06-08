@@ -18,7 +18,11 @@ import {
   guessMultipartImagePart,
   isPhotoFormatError,
 } from "../utils/imageFormats";
-import { platformHttpRequest, type HttpResponse } from "../utils/iosHttp";
+import {
+  httpRequestViaXhr,
+  platformHttpRequest,
+  type HttpResponse,
+} from "../utils/iosHttp";
 import { withTimeout } from "../utils/withTimeout";
 import { normalizePickedImageUri } from "./pickedImage";
 import type {
@@ -2080,11 +2084,12 @@ async function uploadReplicateFileViaFileSystem(
   return url;
 }
 
-async function uploadReplicateFileViaFetch(
+async function uploadReplicateFileViaHttp(
   token: string,
   localUri: string,
   fileName: string,
-  mimeType: string
+  mimeType: string,
+  transport: "fetch" | "xhr"
 ): Promise<string> {
   const form = new FormData();
   form.append(
@@ -2096,18 +2101,23 @@ async function uploadReplicateFileViaFetch(
     } as unknown as Blob
   );
 
-  const res = await fetchWithTimeout(
-    REPLICATE_FILES,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-      body: form,
+  const init: RequestInit = {
+    method: "POST",
+    headers: {
+      Authorization: `Token ${token}`,
     },
-    90_000,
-    "Replicate file upload timed out."
-  );
+    body: form,
+  };
+
+  const res =
+    transport === "xhr"
+      ? await httpRequestViaXhr(REPLICATE_FILES, init)
+      : await fetchWithTimeout(
+          REPLICATE_FILES,
+          init,
+          90_000,
+          "Replicate file upload timed out."
+        );
   const raw = await res.text();
   if (!res.ok) {
     throw new Error(`Replicate file upload ${res.status}: ${raw}`);
@@ -2118,6 +2128,15 @@ async function uploadReplicateFileViaFetch(
     throw new Error("Replicate file response missing urls.get.");
   }
   return url;
+}
+
+async function uploadReplicateFileViaFetch(
+  token: string,
+  localUri: string,
+  fileName: string,
+  mimeType: string
+): Promise<string> {
+  return uploadReplicateFileViaHttp(token, localUri, fileName, mimeType, "fetch");
 }
 
 const MAX_STAGING_EDGE = 2048;
@@ -2185,23 +2204,77 @@ async function uploadLocalImageToReplicate(
       );
     }
 
-    try {
-      return await uploadReplicateFileViaFileSystem(token, uploadUri, uploadMime);
-    } catch (nativeUploadErr) {
-      if (__DEV__) {
-        const msg =
-          nativeUploadErr instanceof Error
-            ? nativeUploadErr.message
-            : String(nativeUploadErr);
-        console.warn("[HomeAI] Replicate FileSystem upload failed, trying fetch:", msg);
+    const uploadAttempts: Array<{
+      label: string;
+      run: () => Promise<string>;
+    }> =
+      Platform.OS === "ios"
+        ? [
+            {
+              label: "fetch",
+              run: () =>
+                uploadReplicateFileViaFetch(
+                  token,
+                  uploadUri,
+                  uploadName,
+                  uploadMime
+                ),
+            },
+            {
+              label: "FileSystem",
+              run: () =>
+                uploadReplicateFileViaFileSystem(token, uploadUri, uploadMime),
+            },
+            {
+              label: "XHR",
+              run: () =>
+                uploadReplicateFileViaHttp(
+                  token,
+                  uploadUri,
+                  uploadName,
+                  uploadMime,
+                  "xhr"
+                ),
+            },
+          ]
+        : [
+            {
+              label: "FileSystem",
+              run: () =>
+                uploadReplicateFileViaFileSystem(token, uploadUri, uploadMime),
+            },
+            {
+              label: "fetch",
+              run: () =>
+                uploadReplicateFileViaFetch(
+                  token,
+                  uploadUri,
+                  uploadName,
+                  uploadMime
+                ),
+            },
+          ];
+
+    let lastErr: unknown;
+    for (let i = 0; i < uploadAttempts.length; i++) {
+      const attempt = uploadAttempts[i];
+      try {
+        return await attempt.run();
+      } catch (err) {
+        lastErr = err;
+        const msg = err instanceof Error ? err.message : String(err);
+        const next = uploadAttempts[i + 1];
+        if (next) {
+          console.warn(
+            `[HomeAI] Replicate ${attempt.label} upload failed, trying ${next.label}:`,
+            msg
+          );
+        }
       }
-      return await uploadReplicateFileViaFetch(
-        token,
-        uploadUri,
-        uploadName,
-        uploadMime
-      );
     }
+    throw lastErr instanceof Error
+      ? lastErr
+      : new Error("Replicate file upload failed.");
   } catch (err) {
     throw err;
   } finally {
@@ -2591,6 +2664,12 @@ export function formatStagingError(
       message: translate(languageId, "error.stagingPhotoFormatBody"),
     };
   }
+  if (raw.includes("STAGING_CONFIG_MISSING")) {
+    return {
+      title: translate(languageId, "error.stagingConfigTitle"),
+      message: translate(languageId, "error.stagingConfigBody"),
+    };
+  }
   return {
     title: translate(languageId, "error.stagingGenericTitle"),
     message: translate(languageId, "error.stagingGenericBody"),
@@ -2630,24 +2709,20 @@ export async function generateStagedImage(
 
   if (!token) {
     throw new Error(
-      "Add EXPO_PUBLIC_REPLICATE_API_TOKEN to a .env file in the project root and restart Expo (npx expo start -c). " +
+      "STAGING_CONFIG_MISSING: Add EXPO_PUBLIC_REPLICATE_API_TOKEN to .env in the project root, then rebuild in Xcode (Product → Clean Build Folder, then Run). " +
       "Or set EXPO_PUBLIC_STAGING_MOCK=1 only for a demo that ignores your photo."
     );
   }
 
   const promptAugmentation = await tryAugmentStagingPrompt(params);
 
-  if (__DEV__) {
-    console.warn("[HomeAI] staging: uploading photo to Replicate…");
-  }
+  console.warn("[HomeAI] staging: uploading photo to Replicate…");
   const imageInputUrl = await withTimeout(
     resolveImageInputUrl(token, imageUri),
     120_000,
     "Uploading your photo timed out. Check your connection and try again."
   );
 
-  if (__DEV__) {
-    console.warn("[HomeAI] staging: running Replicate model…");
-  }
+  console.warn("[HomeAI] staging: running Replicate model…");
   return runReplicateStaging(token, imageInputUrl, params, promptAugmentation);
 }
