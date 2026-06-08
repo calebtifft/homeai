@@ -51,7 +51,7 @@ export function httpRequestViaXhr(
 
     const method = (init?.method ?? "GET").toUpperCase();
     xhr.open(method, input);
-    xhr.timeout = 45_000;
+    xhr.timeout = 120_000;
     applyHeaders(xhr, init?.headers);
     xhr.send((init?.body ?? null) as XMLHttpRequestBodyInit | null);
   });

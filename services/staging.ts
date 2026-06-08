@@ -582,7 +582,7 @@ async function localImageToReplicateDataUri(localUri: string): Promise<string> {
     return `data:image/jpeg;base64,${b64}`;
   } finally {
     for (const uri of temps) {
-      await FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
+      await FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => { });
     }
   }
 }
@@ -2059,6 +2059,41 @@ function multipartFileUri(localUri: string): string {
   return localUri;
 }
 
+async function uploadReplicateFileViaFileSystem(
+  token: string,
+  localUri: string,
+  mimeType: string
+): Promise<string> {
+  const result = await withTimeout(
+    FileSystem.uploadAsync(REPLICATE_FILES, localUri, {
+      uploadType: FileSystemUploadType.MULTIPART,
+      fieldName: "content",
+      mimeType,
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+      parameters: {
+        metadata: "{}",
+      },
+    }),
+    90_000,
+    "Replicate file upload timed out."
+  );
+
+  if (result.status < 200 || result.status >= 300) {
+    throw new Error(
+      `Replicate file upload ${result.status}: ${result.body?.slice(0, 500) ?? ""}`
+    );
+  }
+
+  const data = JSON.parse(result.body) as ReplicateFileCreateResponse;
+  const url = data.urls?.get;
+  if (!url) {
+    throw new Error("Replicate file response missing urls.get.");
+  }
+  return url;
+}
+
 async function uploadReplicateFileViaFetch(
   token: string,
   localUri: string,
@@ -2084,7 +2119,7 @@ async function uploadReplicateFileViaFetch(
       },
       body: form,
     },
-    30000,
+    90_000,
     "Replicate file upload timed out."
   );
   const raw = await res.text();
@@ -2166,7 +2201,16 @@ async function uploadLocalImageToReplicate(
       );
     }
 
-    if (Platform.OS === "ios") {
+    try {
+      return await uploadReplicateFileViaFileSystem(token, uploadUri, uploadMime);
+    } catch (nativeUploadErr) {
+      if (__DEV__) {
+        const msg =
+          nativeUploadErr instanceof Error
+            ? nativeUploadErr.message
+            : String(nativeUploadErr);
+        console.warn("[HomeAI] Replicate FileSystem upload failed, trying XHR:", msg);
+      }
       return await uploadReplicateFileViaFetch(
         token,
         uploadUri,
@@ -2174,45 +2218,7 @@ async function uploadLocalImageToReplicate(
         uploadMime
       );
     }
-
-    const result = await withTimeout(
-      FileSystem.uploadAsync(REPLICATE_FILES, uploadUri, {
-        uploadType: FileSystemUploadType.MULTIPART,
-        fieldName: "content",
-        mimeType: uploadMime,
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-        parameters: {
-          metadata: "{}",
-        },
-      }),
-      90_000,
-      "Replicate file upload timed out."
-    );
-
-    if (result.status < 200 || result.status >= 300) {
-      throw new Error(
-        `Replicate file upload ${result.status}: ${result.body?.slice(0, 500) ?? ""}`
-      );
-    }
-
-    const data = JSON.parse(result.body) as ReplicateFileCreateResponse;
-    const url = data.urls?.get;
-    if (!url) {
-      throw new Error("Replicate file response missing urls.get.");
-    }
-    return url;
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (Platform.OS === "android") {
-      return await uploadReplicateFileViaFetch(
-        token,
-        uploadUri,
-        uploadName,
-        uploadMime
-      );
-    }
     throw err;
   } finally {
     if (jpegTemp) {
@@ -2231,7 +2237,10 @@ async function resolveImageInputUrl(
   if (/^https?:\/\//i.test(imageUri)) {
     return imageUri;
   }
-  if (Platform.OS === "ios") {
+  // Expo Go only: embed JPEG as data URI (multipart upload is unreliable there).
+  // Dev client + App Store builds upload via FileSystem first — avoids ~1MB JSON POSTs
+  // that often fail on real iPhones (simulator may still succeed with data URIs).
+  if (Platform.OS === "ios" && isExpoGoClient()) {
     try {
       return await localImageToReplicateDataUri(imageUri);
     } catch (e) {
