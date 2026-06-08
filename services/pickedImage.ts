@@ -1,6 +1,10 @@
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Image } from "react-native";
+import {
+  createPhotoFormatError,
+  extensionFromUri,
+} from "../utils/imageFormats";
 import { withTimeout } from "../utils/withTimeout";
 
 /** Keep uploads predictable; staging downscales again before Replicate. */
@@ -34,9 +38,7 @@ async function ensureFileUri(uri: string): Promise<{ uri: string; temp: boolean 
       "Could not read this photo. Try taking the picture again inside HomeAI."
     );
   }
-  const path = uri.split("?")[0] ?? uri;
-  const extMatch = path.match(/\.(jpe?g|png|heic|heif|webp)$/i);
-  const ext = extMatch ? extMatch[0].toLowerCase() : ".jpg";
+  const ext = extensionFromUri(uri);
   const dest = `${baseDir}homeai-pick-${Date.now()}${ext}`;
   await FileSystem.copyAsync({ from: uri, to: dest });
   return { uri: dest, temp: true };
@@ -66,10 +68,16 @@ async function normalizePickedImageUriInner(sourceUri: string): Promise<string> 
     actions = [{ resize: { width: 2048 } }];
   }
 
-  const out = await ImageManipulator.manipulateAsync(fileUri, actions, {
-    compress: 0.92,
-    format: ImageManipulator.SaveFormat.JPEG,
-  });
+  let out: ImageManipulator.ImageResult;
+  try {
+    out = await ImageManipulator.manipulateAsync(fileUri, actions, {
+      compress: 0.92,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
+    throw createPhotoFormatError(detail);
+  }
 
   if (copiedTemp && fileUri !== out.uri) {
     await FileSystem.deleteAsync(fileUri, { idempotent: true }).catch(() => {});

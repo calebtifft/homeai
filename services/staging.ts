@@ -12,9 +12,15 @@ import {
   type WallTreatmentType,
 } from "../constants/wallsDesign";
 import { translate } from "../locales/strings";
-import { normalizePickedImageUri } from "./pickedImage";
+import {
+  createPhotoFormatError,
+  extensionFromUri,
+  guessMultipartImagePart,
+  isPhotoFormatError,
+} from "../utils/imageFormats";
 import { platformHttpRequest, type HttpResponse } from "../utils/iosHttp";
 import { withTimeout } from "../utils/withTimeout";
+import { normalizePickedImageUri } from "./pickedImage";
 import type {
   DesignMode,
   ExteriorSceneType,
@@ -2011,22 +2017,6 @@ type ReplicateFileCreateResponse = {
   urls?: { get?: string };
 };
 
-function guessMultipartImagePart(localUri: string): { name: string; type: string } {
-  const base =
-    localUri.split("/").pop()?.split("?")[0]?.trim() || "room-photo.jpg";
-  const lower = base.toLowerCase();
-  const dot = lower.lastIndexOf(".");
-  const ext = dot >= 0 ? lower.slice(dot + 1) : "";
-  if (ext === "png")
-    return { name: base.toLowerCase().endsWith(".png") ? base : `${base}.png`, type: "image/png" };
-  if (ext === "webp") return { name: base, type: "image/webp" };
-  if (ext === "heic" || ext === "heif")
-    return { name: base, type: "image/heic" };
-  if (ext === "jpg" || ext === "jpeg")
-    return { name: base.toLowerCase().match(/\.(jpe?g)$/) ? base : `${base}.jpg`, type: "image/jpeg" };
-  return { name: base.includes(".") ? base : `${base}.jpg`, type: "image/jpeg" };
-}
-
 async function copyPickableUriToCacheIfNeeded(localUri: string): Promise<{
   fileUri: string;
   tempCopy: boolean;
@@ -2040,8 +2030,7 @@ async function copyPickableUriToCacheIfNeeded(localUri: string): Promise<{
       "Cannot read this image path for upload. Try picking the photo again, or use iOS/Android (not web)."
     );
   }
-  const { name } = guessMultipartImagePart(localUri);
-  const ext = name.includes(".") ? name.slice(name.lastIndexOf(".")) : ".jpg";
+  const ext = extensionFromUri(localUri);
   const dest = `${baseDir}homeai-replicate-${Date.now()}${ext}`;
   try {
     await FileSystem.copyAsync({ from: localUri, to: dest });
@@ -2174,9 +2163,7 @@ async function toRgbJpegUri(sourceUri: string): Promise<{
       return { uri: sourceUri, isNewFile: false };
     }
     const msg = e instanceof Error ? e.message : String(e);
-    throw new Error(
-      `Could not convert image to RGB JPEG for staging. ${msg}`
-    );
+    throw createPhotoFormatError(msg);
   }
 }
 
@@ -2599,6 +2586,12 @@ export function formatStagingError(
     return {
       title: translate(languageId, "error.staging401Title"),
       message: translate(languageId, "error.staging401Body"),
+    };
+  }
+  if (isPhotoFormatError(err)) {
+    return {
+      title: translate(languageId, "error.stagingPhotoFormatTitle"),
+      message: translate(languageId, "error.stagingPhotoFormatBody"),
     };
   }
   return {

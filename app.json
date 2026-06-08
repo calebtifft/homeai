@@ -19,7 +19,54 @@
         "NSCameraUsageDescription": "HomeAI needs camera access to take room photos for staging.",
         "NSPhotoLibraryUsageDescription": "HomeAI needs access to your photos to stage your room images.",
         "NSPhotoLibraryAddUsageDescription": "HomeAI saves your staged room image to your photo library when you tap Save to Photos.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UTImportedTypeDeclarations": [
+          {
+            "UTTypeIdentifier": "public.avif",
+            "UTTypeDescription": "AVIF Image",
+            "UTTypeConformsTo": ["public.image"],
+            "UTTypeTagSpecification": {
+              "public.filename-extension": ["avif"],
+              "public.mime-type": ["image/avif"]
+            }
+          },
+          {
+            "UTTypeIdentifier": "public.heic",
+            "UTTypeDescription": "HEIC Image",
+            "UTTypeConformsTo": ["public.image"],
+            "UTTypeTagSpecification": {
+              "public.filename-extension": ["heic"],
+              "public.mime-type": ["image/heic"]
+            }
+          },
+          {
+            "UTTypeIdentifier": "public.heif",
+            "UTTypeDescription": "HEIF Image",
+            "UTTypeConformsTo": ["public.image"],
+            "UTTypeTagSpecification": {
+              "public.filename-extension": ["heif"],
+              "public.mime-type": ["image/heif"]
+            }
+          },
+          {
+            "UTTypeIdentifier": "public.tiff",
+            "UTTypeDescription": "TIFF Image",
+            "UTTypeConformsTo": ["public.image"],
+            "UTTypeTagSpecification": {
+              "public.filename-extension": ["tif", "tiff"],
+              "public.mime-type": ["image/tiff"]
+            }
+          },
+          {
+            "UTTypeIdentifier": "com.compuserve.gif",
+            "UTTypeDescription": "GIF Image",
+            "UTTypeConformsTo": ["public.image"],
+            "UTTypeTagSpecification": {
+              "public.filename-extension": ["gif"],
+              "public.mime-type": ["image/gif"]
+            }
+          }
+        ]
       },
       "bundleIdentifier": "com.ov.homeai"
     },

@@ -665,6 +665,9 @@ export const STRINGS_EN = {
   "error.staging401Title": "Staging unavailable",
   "error.staging401Body":
     "We couldn't start staging right now. Please try again later or contact support from Settings.",
+  "error.stagingPhotoFormatTitle": "Photo format not supported",
+  "error.stagingPhotoFormatBody":
+    "HomeAI could not read this image (AVIF, HEIC, TIFF, and other formats are converted automatically). Try another photo, take a new picture in the app, or export as JPEG from your library.",
   "error.stagingGenericTitle": "Staging failed",
   "error.stagingGenericBody":
     "Something went wrong. Please try again. If it keeps happening, contact support from Settings.",
