@@ -602,7 +602,7 @@ async function fetchWithTimeout(
   timeoutMs: number,
   timeoutMessage: string
 ): Promise<HttpResponse> {
-  if (Platform.OS === "ios") {
+  if (Platform.OS === "ios" && isExpoGoClient()) {
     return Promise.race([
       platformHttpRequest(input, fetchInitWithoutSignal(init)),
       new Promise<never>((_, reject) => {
@@ -614,13 +614,10 @@ async function fetchWithTimeout(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(input, { ...(init ?? {}), signal: controller.signal });
-    return {
-      ok: res.ok,
-      status: res.status,
-      text: () => res.text(),
-      json: () => res.json(),
-    };
+    return await platformHttpRequest(input, {
+      ...(init ?? {}),
+      signal: controller.signal,
+    });
   } catch (e) {
     const aborted =
       typeof e === "object" &&
@@ -2196,7 +2193,7 @@ async function uploadLocalImageToReplicate(
           nativeUploadErr instanceof Error
             ? nativeUploadErr.message
             : String(nativeUploadErr);
-        console.warn("[HomeAI] Replicate FileSystem upload failed, trying XHR:", msg);
+        console.warn("[HomeAI] Replicate FileSystem upload failed, trying fetch:", msg);
       }
       return await uploadReplicateFileViaFetch(
         token,
@@ -2640,10 +2637,17 @@ export async function generateStagedImage(
 
   const promptAugmentation = await tryAugmentStagingPrompt(params);
 
+  if (__DEV__) {
+    console.warn("[HomeAI] staging: uploading photo to Replicate…");
+  }
   const imageInputUrl = await withTimeout(
     resolveImageInputUrl(token, imageUri),
     120_000,
     "Uploading your photo timed out. Check your connection and try again."
   );
+
+  if (__DEV__) {
+    console.warn("[HomeAI] staging: running Replicate model…");
+  }
   return runReplicateStaging(token, imageInputUrl, params, promptAugmentation);
 }

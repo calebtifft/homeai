@@ -1,3 +1,5 @@
+import Constants, { ExecutionEnvironment } from "expo-constants";
+import { fetch as expoFetch } from "expo/fetch";
 import { Platform } from "react-native";
 
 /** Minimal fetch-shaped response used on iOS where `fetch` is unreliable in Expo Go. */
@@ -7,6 +9,10 @@ export type HttpResponse = {
   text: () => Promise<string>;
   json: () => Promise<unknown>;
 };
+
+function isExpoGoClient(): boolean {
+  return Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+}
 
 function applyHeaders(
   xhr: XMLHttpRequest,
@@ -57,17 +63,31 @@ export function httpRequestViaXhr(
   });
 }
 
-export function platformHttpRequest(
+async function fetchViaPlatform(
   input: string,
   init?: RequestInit
 ): Promise<HttpResponse> {
-  if (Platform.OS === "ios") {
-    return httpRequestViaXhr(input, init);
-  }
-  return fetch(input, init ?? {}).then((res) => ({
+  const fetchImpl =
+    Platform.OS === "web" ? fetch.bind(globalThis) : expoFetch;
+  const res = await fetchImpl(input, init ?? {});
+  return {
     ok: res.ok,
     status: res.status,
     text: () => res.text(),
     json: () => res.json(),
-  }));
+  };
+}
+
+/**
+ * Expo Go on iOS: XHR (fetch often fails).
+ * Dev client + production native: expo/fetch (NSURLSession-backed).
+ */
+export function platformHttpRequest(
+  input: string,
+  init?: RequestInit
+): Promise<HttpResponse> {
+  if (Platform.OS === "ios" && isExpoGoClient()) {
+    return httpRequestViaXhr(input, init);
+  }
+  return fetchViaPlatform(input, init);
 }
