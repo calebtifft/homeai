@@ -21,7 +21,7 @@
         "NSPhotoLibraryAddUsageDescription": "HomeAI saves your staged room image to your photo library when you tap Save to Photos.",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "bundleIdentifier": "com.homeai.aihomedesign"
+      "bundleIdentifier": "com.ov.homeai"
     },
     "android": {
       "adaptiveIcon": {
@@ -36,9 +36,10 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
       ],
-      "package": "com.homeai.aihomedesign"
+      "package": "com.ov.homeai"
     },
     "plugins": [
+      "./plugins/withIosXcodeSpacesPathFix.js",
       [
         "expo-image-picker",
         {

@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-const ANDROID_PACKAGE = "com.homeai.aihomedesign";
+const ANDROID_PACKAGE = "com.ov.homeai";
 
 export function revenueCatApiKeyForPlatform(): string | null {
   if (Platform.OS === "ios") {
@@ -76,7 +76,7 @@ export function logRevenueCatSetupFailure(
     "\nChecklist:",
     ...issues.map((i) => `\n  • ${i}`),
     isRevenueCat7117Error(error)
-      ? "\n  • 7117 with a valid test_ key is usually a malformed subscriber URL — rebuild after the App User ID fix (no user: prefix). Also confirm Android package com.homeai.aihomedesign and a current Offering in the dashboard."
+      ? "\n  • 7117 with a valid test_ key is usually a malformed subscriber URL — rebuild after the App User ID fix (no user: prefix). Also confirm Android package com.ov.homeai and a current Offering in the dashboard."
       : ""
   );
 }

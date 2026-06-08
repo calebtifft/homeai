@@ -4,8 +4,6 @@
   <dict>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
-    <key>CFBundleAllowMixedLocalizations</key>
-    <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
@@ -30,12 +28,14 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>homeai</string>
-          <string>com.homeai.aihomedesign</string>
+          <string>com.ov.homeai</string>
         </array>
       </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
@@ -48,9 +48,7 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your camera</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>HomeAI needs camera access to take room photos for staging.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Allow HomeAI to save staged images to your gallery.</string>
     <key>NSPhotoLibraryUsageDescription</key>
