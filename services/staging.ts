@@ -637,8 +637,57 @@ async function fetchWithTimeout(
   }
 }
 
+/**
+ * Expo embed/Xcode builds only inline `process.env.EXPO_PUBLIC_*` with static
+ * property access — `process.env[key]` is always undefined in the app.
+ */
 function getEnv(key: string): string | undefined {
-  return process.env[key];
+  switch (key) {
+    case "EXPO_PUBLIC_REPLICATE_API_TOKEN":
+      return process.env.EXPO_PUBLIC_REPLICATE_API_TOKEN;
+    case "EXPO_PUBLIC_REPLICATE_MODEL_VERSION":
+      return process.env.EXPO_PUBLIC_REPLICATE_MODEL_VERSION;
+    case "EXPO_PUBLIC_REPLICATE_SEED":
+      return process.env.EXPO_PUBLIC_REPLICATE_SEED;
+    case "EXPO_PUBLIC_STAGING_MOCK":
+      return process.env.EXPO_PUBLIC_STAGING_MOCK;
+    case "EXPO_PUBLIC_GEMINI_API_KEY":
+      return process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+    case "EXPO_PUBLIC_GEMINI_MODEL":
+      return process.env.EXPO_PUBLIC_GEMINI_MODEL;
+    case "EXPO_PUBLIC_GEMINI_PROMPT_AUGMENT":
+      return process.env.EXPO_PUBLIC_GEMINI_PROMPT_AUGMENT;
+    case "EXPO_PUBLIC_GEMINI_USE_VISION":
+      return process.env.EXPO_PUBLIC_GEMINI_USE_VISION;
+    case "EXPO_PUBLIC_FLUX_SAFETY_TOLERANCE":
+      return process.env.EXPO_PUBLIC_FLUX_SAFETY_TOLERANCE;
+    case "EXPO_PUBLIC_FLUX_PROMPT_UPSAMPLING":
+      return process.env.EXPO_PUBLIC_FLUX_PROMPT_UPSAMPLING;
+    case "EXPO_PUBLIC_FLUX_ASPECT_RATIO":
+      return process.env.EXPO_PUBLIC_FLUX_ASPECT_RATIO;
+    case "EXPO_PUBLIC_FLUX_OUTPUT_FORMAT":
+      return process.env.EXPO_PUBLIC_FLUX_OUTPUT_FORMAT;
+    case "EXPO_PUBLIC_FLUX_VERBOSE_PROMPT":
+      return process.env.EXPO_PUBLIC_FLUX_VERBOSE_PROMPT;
+    case "EXPO_PUBLIC_ADIRIK_FURNISHED_NUM_INFERENCE_STEPS":
+      return process.env.EXPO_PUBLIC_ADIRIK_FURNISHED_NUM_INFERENCE_STEPS;
+    case "EXPO_PUBLIC_ADIRIK_FURNISHED_GUIDANCE_SCALE":
+      return process.env.EXPO_PUBLIC_ADIRIK_FURNISHED_GUIDANCE_SCALE;
+    case "EXPO_PUBLIC_ADIRIK_FURNISHED_PROMPT_STRENGTH":
+      return process.env.EXPO_PUBLIC_ADIRIK_FURNISHED_PROMPT_STRENGTH;
+    case "EXPO_PUBLIC_ADIRIK_NUM_INFERENCE_STEPS":
+      return process.env.EXPO_PUBLIC_ADIRIK_NUM_INFERENCE_STEPS;
+    case "EXPO_PUBLIC_ADIRIK_GUIDANCE_SCALE":
+      return process.env.EXPO_PUBLIC_ADIRIK_GUIDANCE_SCALE;
+    case "EXPO_PUBLIC_ADIRIK_PROMPT_STRENGTH":
+      return process.env.EXPO_PUBLIC_ADIRIK_PROMPT_STRENGTH;
+    case "EXPO_PUBLIC_REMODELA_FURNISHED_NUM_INFERENCE_STEPS":
+      return process.env.EXPO_PUBLIC_REMODELA_FURNISHED_NUM_INFERENCE_STEPS;
+    case "EXPO_PUBLIC_REMODELA_FURNISHED_CONDITION_SCALE":
+      return process.env.EXPO_PUBLIC_REMODELA_FURNISHED_CONDITION_SCALE;
+    default:
+      return undefined;
+  }
 }
 
 function parseEnvInt(
@@ -2699,8 +2748,8 @@ export async function generateStagedImage(
   }
 
   const { imageUri, photoMode } = params;
-  const useMock = getEnv("EXPO_PUBLIC_STAGING_MOCK") === "1";
-  const token = getEnv("EXPO_PUBLIC_REPLICATE_API_TOKEN")?.trim();
+  const useMock = process.env.EXPO_PUBLIC_STAGING_MOCK === "1";
+  const token = process.env.EXPO_PUBLIC_REPLICATE_API_TOKEN?.trim();
 
   if (useMock) {
     await sleep(2000 + Math.random() * 1000);
