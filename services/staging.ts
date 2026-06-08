@@ -12,6 +12,7 @@ import {
   type WallTreatmentType,
 } from "../constants/wallsDesign";
 import { translate } from "../locales/strings";
+import { envFromProcessOrExtra } from "../utils/expoExtra";
 import {
   createPhotoFormatError,
   extensionFromUri,
@@ -644,21 +645,14 @@ async function fetchWithTimeout(
 function getEnv(key: string): string | undefined {
   switch (key) {
     case "EXPO_PUBLIC_REPLICATE_API_TOKEN":
-      return process.env.EXPO_PUBLIC_REPLICATE_API_TOKEN;
     case "EXPO_PUBLIC_REPLICATE_MODEL_VERSION":
-      return process.env.EXPO_PUBLIC_REPLICATE_MODEL_VERSION;
     case "EXPO_PUBLIC_REPLICATE_SEED":
-      return process.env.EXPO_PUBLIC_REPLICATE_SEED;
     case "EXPO_PUBLIC_STAGING_MOCK":
-      return process.env.EXPO_PUBLIC_STAGING_MOCK;
     case "EXPO_PUBLIC_GEMINI_API_KEY":
-      return process.env.EXPO_PUBLIC_GEMINI_API_KEY;
     case "EXPO_PUBLIC_GEMINI_MODEL":
-      return process.env.EXPO_PUBLIC_GEMINI_MODEL;
     case "EXPO_PUBLIC_GEMINI_PROMPT_AUGMENT":
-      return process.env.EXPO_PUBLIC_GEMINI_PROMPT_AUGMENT;
     case "EXPO_PUBLIC_GEMINI_USE_VISION":
-      return process.env.EXPO_PUBLIC_GEMINI_USE_VISION;
+      return envFromProcessOrExtra(key);
     case "EXPO_PUBLIC_FLUX_SAFETY_TOLERANCE":
       return process.env.EXPO_PUBLIC_FLUX_SAFETY_TOLERANCE;
     case "EXPO_PUBLIC_FLUX_PROMPT_UPSAMPLING":
@@ -2748,8 +2742,8 @@ export async function generateStagedImage(
   }
 
   const { imageUri, photoMode } = params;
-  const useMock = process.env.EXPO_PUBLIC_STAGING_MOCK === "1";
-  const token = process.env.EXPO_PUBLIC_REPLICATE_API_TOKEN?.trim();
+  const useMock = envFromProcessOrExtra("EXPO_PUBLIC_STAGING_MOCK") === "1";
+  const token = envFromProcessOrExtra("EXPO_PUBLIC_REPLICATE_API_TOKEN")?.trim();
 
   if (useMock) {
     await sleep(2000 + Math.random() * 1000);
@@ -2765,6 +2759,12 @@ export async function generateStagedImage(
 
   const promptAugmentation = await tryAugmentStagingPrompt(params);
 
+  console.warn(
+    "[HomeAI] staging: token loaded:",
+    Boolean(token),
+    "extra:",
+    Boolean(Constants.expoConfig?.extra?.replicateApiToken)
+  );
   console.warn("[HomeAI] staging: uploading photo to Replicate…");
   const imageInputUrl = await withTimeout(
     resolveImageInputUrl(token, imageUri),
