@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -24,6 +25,7 @@ import { PrimaryCTA } from "../components/PrimaryCTA";
 import { RoomTypeTile } from "../components/RoomTypeTile";
 import { InteriorStyleGrid } from "../components/InteriorStyleGrid";
 import { WallColorGrid } from "../components/WallColorGrid";
+import { WallFinishGrid } from "../components/WallFinishGrid";
 import { ColorWheelPicker } from "../components/ColorWheelPicker";
 import { DEFAULT_STAGING_PALETTE_ID } from "../constants/colorPalettes";
 import {
@@ -49,6 +51,11 @@ import {
 import { useLanguage } from "../contexts/LanguageContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { normalizePickedImageUri } from "../services/pickedImage";
+import {
+  isCameraAccessGranted,
+  isMediaLibraryAccessGranted,
+  shouldOfferPermissionSettings,
+} from "../utils/permissions";
 import { formatStagingError } from "../services/staging";
 import {
   EXTERIOR_SCENE_LABEL_KEY,
@@ -648,61 +655,6 @@ export function ConfigureScreen({ route, navigation }: Props) {
           flex: 1,
           marginLeft: 0,
         },
-        wallFinishGrid: {
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: 12,
-          width: "100%",
-          maxWidth: 400,
-          alignSelf: "center",
-        },
-        wallFinishCard: {
-          width: "31%",
-          minWidth: 92,
-          paddingTop: 12,
-          paddingBottom: 10,
-          paddingHorizontal: 8,
-          borderRadius: radius.lg,
-          borderWidth: 1,
-          borderColor: colors.surfaceContainerHigh,
-          backgroundColor: colors.surfaceContainerLowest,
-          alignItems: "center",
-          position: "relative",
-        },
-        wallFinishCardSelected: {
-          borderColor: colors.primary,
-          backgroundColor: isDark
-            ? "rgba(115, 134, 86, 0.18)"
-            : "rgba(115, 134, 86, 0.10)",
-        },
-        wallSwatch: {
-          width: 56,
-          height: 56,
-          borderRadius: 28,
-          borderWidth: 1,
-          borderColor: isDark
-            ? "rgba(255,255,255,0.16)"
-            : "rgba(0,0,0,0.12)",
-          marginBottom: 8,
-        },
-        wallFinishLabel: {
-          fontFamily: Manrope.semiBold,
-          fontSize: 12,
-          letterSpacing: -0.05,
-          textAlign: "center",
-          color: colors.onSurface,
-        },
-        wallFinishCheck: {
-          position: "absolute",
-          top: 6,
-          right: 6,
-          width: 22,
-          height: 22,
-          borderRadius: 11,
-          backgroundColor: colors.primary,
-          alignItems: "center",
-          justifyContent: "center",
-        },
         wallCustomBlock: {
           width: "100%",
           maxWidth: 400,
@@ -1015,11 +967,23 @@ export function ConfigureScreen({ route, navigation }: Props) {
   );
 
   const onTakePhoto = useCallback(async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!isCameraAccessGranted(permission.status)) {
+      const buttons: { text: string; style?: "cancel"; onPress?: () => void }[] = [
+        { text: t("common.ok"), style: "cancel" },
+      ];
+      if (shouldOfferPermissionSettings(permission.status, permission.canAskAgain)) {
+        buttons.push({
+          text: t("settings.notificationsOpenSettings"),
+          onPress: () => {
+            void Linking.openSettings();
+          },
+        });
+      }
       Alert.alert(
         t("configure.permissionCameraTitle"),
-        t("configure.permissionCameraBody")
+        t("configure.permissionCameraBody"),
+        buttons
       );
       return;
     }
@@ -1039,11 +1003,23 @@ export function ConfigureScreen({ route, navigation }: Props) {
   }, [applyPickedPhoto, iosPickerOptions, t]);
 
   const onChooseFromLibrary = useCallback(async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!isMediaLibraryAccessGranted(permission.status)) {
+      const buttons: { text: string; style?: "cancel"; onPress?: () => void }[] = [
+        { text: t("common.ok"), style: "cancel" },
+      ];
+      if (shouldOfferPermissionSettings(permission.status, permission.canAskAgain)) {
+        buttons.push({
+          text: t("settings.notificationsOpenSettings"),
+          onPress: () => {
+            void Linking.openSettings();
+          },
+        });
+      }
       Alert.alert(
         t("configure.permissionPhotosTitle"),
-        t("configure.permissionPhotosBody")
+        t("configure.permissionPhotosBody"),
+        buttons
       );
       return;
     }
@@ -1284,6 +1260,7 @@ export function ConfigureScreen({ route, navigation }: Props) {
                   </Text>
                   <WallColorGrid
                     selectedId={selectedWallQuickColorId}
+                    selectedHex={normalizedWallColor}
                     onSelect={onSelectWallQuickColor}
                     labelFor={wallQuickColorLabelFor}
                   />
@@ -1398,52 +1375,14 @@ export function ConfigureScreen({ route, navigation }: Props) {
                   </View>
                 </View>
               ) : (
-                <View style={styles.wallFinishGrid}>
-                  {wallPresetsForTreatment(wallTreatment ?? DEFAULT_WALL_TREATMENT).map(
-                    (preset) => {
-                      const selected = wallStyleId === preset.id;
-                      return (
-                        <Pressable
-                          key={preset.id}
-                          onPress={() => setWallStyleId(preset.id)}
-                          style={({ pressed }) => [
-                            styles.wallFinishCard,
-                            selected && styles.wallFinishCardSelected,
-                            pressed && { opacity: 0.92 },
-                          ]}
-                          accessibilityRole="radio"
-                          accessibilityState={{ selected }}
-                          accessibilityLabel={t(WALL_PRESET_LABEL_KEY[preset.id])}
-                        >
-                          <View
-                            style={[
-                              styles.wallSwatch,
-                              { backgroundColor: preset.swatch },
-                            ]}
-                          />
-                          <Text
-                            numberOfLines={2}
-                            style={[
-                              styles.wallFinishLabel,
-                              selected && { color: colors.primary },
-                            ]}
-                          >
-                            {t(WALL_PRESET_LABEL_KEY[preset.id])}
-                          </Text>
-                          {selected ? (
-                            <View style={styles.wallFinishCheck} pointerEvents="none">
-                              <MaterialIcons
-                                name="check"
-                                size={14}
-                                color={colors.onPrimary}
-                              />
-                            </View>
-                          ) : null}
-                        </Pressable>
-                      );
-                    }
+                <WallFinishGrid
+                  presets={wallPresetsForTreatment(
+                    wallTreatment ?? DEFAULT_WALL_TREATMENT
                   )}
-                </View>
+                  selectedId={wallStyleId}
+                  onSelect={setWallStyleId}
+                  labelFor={(id) => t(WALL_PRESET_LABEL_KEY[id])}
+                />
               )
             ) : isExterior ? (
               <InteriorStyleGrid

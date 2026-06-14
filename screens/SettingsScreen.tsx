@@ -1,3 +1,4 @@
+import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { ComponentProps } from "react";
@@ -40,6 +41,7 @@ import {
   ensureNotificationsReady,
   getOsNotificationsGranted,
 } from "../services/stagingNotifications";
+import { shouldOfferPermissionSettings } from "../utils/permissions";
 import { formatSubscriptionDate } from "../utils/subscriptionDisplay";
 import type { StringKey } from "../locales/strings";
 import { translate } from "../locales/strings";
@@ -471,17 +473,13 @@ export function SettingsScreen({ navigation }: Props) {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const t = await loadSettingsToggles();
+      const toggles = await loadSettingsToggles();
       if (cancelled) return;
-      let on = t.notificationsOn;
-      if (on && Platform.OS !== "web") {
-        if (!(await getOsNotificationsGranted())) {
-          const granted = await ensureNotificationsReady();
-          if (!granted) {
-            on = false;
-            await setNotificationsEnabled(false);
-          }
-        }
+      let on = toggles.notificationsOn;
+      // Sync in-app toggle with OS state — do not auto-prompt on Settings open.
+      if (on && Platform.OS !== "web" && !(await getOsNotificationsGranted())) {
+        on = false;
+        await setNotificationsEnabled(false);
       }
       if (!cancelled) setNotificationsOn(on);
     })();
@@ -496,24 +494,36 @@ export function SettingsScreen({ navigation }: Props) {
       void (async () => {
         await setNotificationsEnabled(next);
         if (!next || Platform.OS === "web") return;
-        const granted = await ensureNotificationsReady();
-        if (!granted) {
-          Alert.alert(
-            t("settings.notificationsDeniedTitle"),
-            t("settings.notificationsDeniedBody"),
-            [
-              { text: t("common.ok"), style: "cancel" },
-              {
-                text: t("settings.notificationsOpenSettings"),
-                onPress: () => {
-                  void Linking.openSettings();
-                },
-              },
-            ]
-          );
-          setNotificationsOn(false);
-          await setNotificationsEnabled(false);
+
+        await ensureNotificationsReady();
+        const granted = await getOsNotificationsGranted();
+        if (granted) return;
+
+        const osPermission = await Notifications.getPermissionsAsync();
+        setNotificationsOn(false);
+        await setNotificationsEnabled(false);
+
+        const buttons: { text: string; style?: "cancel"; onPress?: () => void }[] = [
+          { text: t("common.ok"), style: "cancel" },
+        ];
+        if (
+          shouldOfferPermissionSettings(
+            osPermission.status,
+            osPermission.canAskAgain
+          )
+        ) {
+          buttons.push({
+            text: t("settings.notificationsOpenSettings"),
+            onPress: () => {
+              void Linking.openSettings();
+            },
+          });
         }
+        Alert.alert(
+          t("settings.notificationsDeniedTitle"),
+          t("settings.notificationsDeniedBody"),
+          buttons
+        );
       })();
     },
     [t]

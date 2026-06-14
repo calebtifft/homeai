@@ -3,6 +3,7 @@ import * as Notifications from "expo-notifications";
 import { AppState, Platform } from "react-native";
 import type { LanguageId } from "../constants/languages";
 import { translate } from "../locales/strings";
+import { isNotificationAccessGranted } from "../utils/permissions";
 import { STORAGE_NOTIFICATIONS } from "./settingsPreferences";
 
 const ANDROID_CHANNEL_ID = "staging-complete";
@@ -69,13 +70,13 @@ export async function ensureAndroidStagingNotificationChannel(): Promise<void> {
 export async function getOsNotificationsGranted(): Promise<boolean> {
   if (Platform.OS === "web") return false;
   const { status } = await Notifications.getPermissionsAsync();
-  return status === "granted" || status === "provisional";
+  return isNotificationAccessGranted(status);
 }
 
 export async function requestOsNotificationsPermission(): Promise<boolean> {
   if (Platform.OS === "web") return false;
-  const { status: existing } = await Notifications.getPermissionsAsync();
-  if (existing === "granted") return true;
+  const existing = await Notifications.getPermissionsAsync();
+  if (isNotificationAccessGranted(existing.status)) return true;
   const { status } = await Notifications.requestPermissionsAsync({
     ios: {
       allowAlert: true,
@@ -83,7 +84,10 @@ export async function requestOsNotificationsPermission(): Promise<boolean> {
       allowSound: true,
     },
   });
-  return status === "granted";
+  if (isNotificationAccessGranted(status)) return true;
+  // Re-read in case the request response lags behind the OS grant.
+  const after = await Notifications.getPermissionsAsync();
+  return isNotificationAccessGranted(after.status);
 }
 
 /**
