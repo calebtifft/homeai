@@ -1,4 +1,5 @@
 import type { LanguageId } from "../constants/languages";
+import { mobileStoreTranslationVars } from "../utils/mobileStoreStrings";
 import {
   EXTRA_MISSING_JA,
   EXTRA_MISSING_KO,
@@ -414,7 +415,7 @@ export const STRINGS_EN = {
     "Select a subscription plan. You can change or cancel later where supported by the store.",
   "subscription.continue": "Continue",
   "subscription.footnote":
-    "Payment is charged to your App Store or Google Play account. Subscriptions auto-renew unless canceled before the current period ends. Manage subscriptions in your device settings.",
+    "Payment is charged to your {storeAccount}. Subscriptions auto-renew unless canceled before the current period ends. Manage subscriptions in your device settings.",
   "subscription.legalPrivacyA11y": "Open privacy policy",
   "subscription.legalTermsA11y": "Open terms of service",
   "subscription.checkoutTitle": "Checkout unavailable",
@@ -423,14 +424,15 @@ export const STRINGS_EN = {
   "subscription.purchasing": "Processing…",
   "subscription.billingUnavailableTitle": "Billing unavailable",
   "subscription.billingUnavailableBody":
-    "Subscriptions are available on official App Store and Google Play builds.",
+    "Subscriptions are available on official {store} builds.",
   "subscription.loadingPlans": "Loading live plans…",
   "subscription.restore": "Restore purchases",
   "subscription.restoring": "Restoring…",
   "subscription.restoreTitle": "Restore purchases",
   "subscription.restoreSuccessBody": "Your purchases were restored successfully.",
   "subscription.restoreNoPurchaseBody": "No active purchases were found to restore.",
-  "subscription.restoreUnavailableBody": "Restore is only available on iOS and Android builds.",
+  "subscription.restoreUnavailableBody":
+    "Restore is only available on {nativeBuild} builds.",
   "subscription.restoreFailedBody": "Could not restore purchases. Please try again.",
   "subscription.purchaseSuccessTitle": "Subscription active",
   "subscription.purchaseSuccessBody": "{plan} is now active on this device.",
@@ -451,9 +453,9 @@ export const STRINGS_EN = {
   "subscription.manage": "Manage subscription",
   "subscription.manageFailedTitle": "Could not open subscription settings",
   "subscription.manageFailedBody":
-    "Open the App Store or Google Play app, go to your account, then Subscriptions to manage HomeAI.",
+    "Open the {store} app, go to your account, then Subscriptions to manage HomeAI.",
   "subscription.manageExpoGoBody":
-    "Subscription management opens in the App Store or Google Play app. Use a TestFlight or production build on your device, or open your store account in a browser.",
+    "Subscription management opens in the {store} app. Use a TestFlight or production build on your device, or open your store account in a browser.",
   "subscription.switchPlan": "Switch plan",
   "subscription.upgradePlan": "Upgrade plan",
   "subscription.upgradeToPlan": "Upgrade to {plan}",
@@ -570,10 +572,10 @@ export const STRINGS_EN = {
     "Paint, accent wall, wallpaper, wood paneling, tile or stone, mural, or your own custom prompt. Each treatment offers curated finishes; you can also pick a custom color from the color wheel.",
   "help.q.subs.q": "How do subscriptions work?",
   "help.q.subs.a":
-    "Open Settings → Subscription plans to pick Lifetime, Yearly, or Weekly. Payment is charged via your store account (App Store / Google Play). You can manage or cancel a subscription from your store account.",
+    "Open Settings → Subscription plans to pick Lifetime, Yearly, or Weekly. Payment is charged via your {storeAccount}. You can manage or cancel a subscription from your store account.",
   "help.q.restore.q": "How do I restore my purchase on a new device?",
   "help.q.restore.a":
-    "Open Settings → Subscription plans on the new device and tap 'Restore purchases'. The App Store or Google Play reconnects your active plan.",
+    "Open Settings → Subscription plans on the new device and tap 'Restore purchases'. {store} reconnects your active plan.",
   "help.q.privacy.q": "How are my photos used?",
   "help.q.privacy.a":
     "Photos are used only to create your staged image. Results stay on this device; optional online backup keeps private copies for this install. They are not used to train AI models or shared for other purposes.",
@@ -808,9 +810,9 @@ const OVERRIDES: Partial<Record<LanguageId, Partial<Record<StringKey, string>>>>
     "subscription.manage": "Administrar suscripción",
     "subscription.manageFailedTitle": "No se pudo abrir la configuración",
     "subscription.manageFailedBody":
-      "Abre la App Store o Google Play, ve a tu cuenta y luego Suscripciones para administrar HomeAI.",
+      "Abre la app de {store}, ve a tu cuenta y luego Suscripciones para administrar HomeAI.",
     "subscription.manageExpoGoBody":
-      "La administración de suscripciones se abre en la App Store o Google Play. Usa una compilación TestFlight o de producción en tu dispositivo.",
+      "La administración de suscripciones se abre en la app de {store}. Usa una compilación TestFlight o de producción en tu dispositivo.",
     "subscription.switchPlan": "Cambiar plan",
     "subscription.upgradePlan": "Mejorar plan",
     "subscription.upgradeToPlan": "Mejorar a {plan}",
@@ -1553,10 +1555,10 @@ const EXTRA_OVERRIDES: Partial<
       "페인트, 포인트 벽, 벽지, 우드 패널, 타일·스톤, 벽화 또는 직접 입력한 커스텀 프롬프트를 사용할 수 있습니다. 각 처리에는 큐레이션된 마감이 있으며, 색상휠로 커스텀 색상을 직접 고를 수도 있어요.",
     "help.q.subs.q": "구독은 어떻게 동작하나요?",
     "help.q.subs.a":
-      "설정 → 구독 요금제에서 평생·연간·주간 중 선택할 수 있습니다. 결제는 스토어 계정(App Store / Google Play)으로 청구되며, 스토어에서 관리하거나 취소할 수 있습니다.",
+      "설정 → 구독 요금제에서 평생·연간·주간 중 선택할 수 있습니다. 결제는 {storeAccount}(으)로 청구되며, 스토어에서 관리하거나 취소할 수 있습니다.",
     "help.q.restore.q": "새 기기에서 구매를 복원하려면 어떻게 하나요?",
     "help.q.restore.a":
-      "새 기기에서 설정 → 구독 요금제로 이동해 ‘구매 복원’을 탭하세요. App Store 또는 Google Play가 활성화된 플랜을 다시 연결합니다.",
+      "새 기기에서 설정 → 구독 요금제로 이동해 ‘구매 복원’을 탭하세요. {store}가 활성화된 플랜을 다시 연결합니다.",
     "help.q.privacy.q": "내 사진은 어떻게 사용되나요?",
     "help.q.privacy.a":
       "사진은 스테이징 이미지를 만드는 데만 사용됩니다. 결과는 이 기기에 저장되며, 선택적 온라인 백업은 이 설치에만 비공개로 보관됩니다. AI 모델 학습이나 다른 용도로 공유되지 않습니다.",
@@ -1989,10 +1991,10 @@ const EXTRA_OVERRIDES: Partial<
       "ペイント、アクセントウォール、壁紙、ウッドパネリング、タイル・石材、壁画、自分で入力するカスタムプロンプトが選べます。各処理にはキュレーションされたフィニッシュがあり、カラーホイールでカスタム色を指定することもできます。",
     "help.q.subs.q": "サブスクの仕組みは？",
     "help.q.subs.a":
-      "設定 → サブスクリプションで Lifetime / Year / Week から選択できます。決済はストアアカウント (App Store / Google Play) に請求され、ストア側で管理・解約できます。",
+      "設定 → サブスクリプションで Lifetime / Year / Week から選択できます。決済は{storeAccount}に請求され、ストア側で管理・解約できます。",
     "help.q.restore.q": "新しい端末で購入を復元するには？",
     "help.q.restore.a":
-      "新しい端末で設定 → サブスクリプション → 「購入を復元」をタップします。App Store または Google Play が有効なプランを再接続します。",
+      "新しい端末で設定 → サブスクリプション → 「購入を復元」をタップします。{store} が有効なプランを再接続します。",
     "help.q.privacy.q": "写真はどのように使われますか？",
     "help.q.privacy.a":
       "写真はステージング画像を作るためだけに使います。結果はこの端末に保存され、オンラインバックアップを使う場合もこのインストールだけに非公開で保管されます。AIの学習や他の目的では共有しません。",
@@ -2412,10 +2414,10 @@ const EXTRA_OVERRIDES: Partial<
       "涂料、强调墙、壁纸、护墙板、瓷砖/石材、壁画，或自定义提示词。每种处理都提供精选饰面，也可在色环中挑选自定义颜色。",
     "help.q.subs.q": "订阅是怎么计费的？",
     "help.q.subs.a":
-      "打开设置 → 订阅方案，可选终身、年付或周付。费用通过应用商店账户（App Store / Google Play）结算，可在商店中管理或取消。",
+      "打开设置 → 订阅方案，可选终身、年付或周付。费用通过{storeAccount}结算，可在商店中管理或取消。",
     "help.q.restore.q": "新设备如何恢复购买？",
     "help.q.restore.a":
-      "在新设备上进入设置 → 订阅方案 → 点击「恢复购买」。App Store 或 Google Play 会重新连接你已有的方案。",
+      "在新设备上进入设置 → 订阅方案 → 点击「恢复购买」。{store} 会重新连接你已有的方案。",
     "help.q.privacy.q": "我的照片会如何使用？",
     "help.q.privacy.a":
       "照片仅用于生成你的布景图。结果保存在本设备；若开启在线备份，副本仅与此安装相关且非公开。不会用于训练 AI 模型或作其他用途。",
@@ -2833,10 +2835,10 @@ const EXTRA_OVERRIDES: Partial<
       "塗料、強調牆、壁紙、護牆板、磁磚/石材、壁畫或自訂提示詞。各處理都有精選飾面，亦可在色環中挑選自訂顏色。",
     "help.q.subs.q": "訂閱是怎麼計費的？",
     "help.q.subs.a":
-      "開啟設定 → 訂閱方案，可選終身、年訂或週訂。費用透過商店帳戶（App Store / Google Play）結算，可於商店管理或取消。",
+      "開啟設定 → 訂閱方案，可選終身、年訂或週訂。費用透過{storeAccount}結算，可於商店管理或取消。",
     "help.q.restore.q": "新裝置如何還原購買？",
     "help.q.restore.a":
-      "於新裝置進入設定 → 訂閱方案，點「還原購買」。App Store 或 Google Play 會重新連接你的有效方案。",
+      "於新裝置進入設定 → 訂閱方案，點「還原購買」。{store} 會重新連接你的有效方案。",
     "help.q.privacy.q": "我的照片如何被使用？",
     "help.q.privacy.a":
       "照片僅用於產生佈景影像。結果保存在本裝置；若開啟線上備份，副本僅與此安裝相關且非公開。不會用於訓練 AI 模型或作其他用途。",
@@ -2903,5 +2905,5 @@ export function translate(
   const esEsFallback =
     languageId === "es-ES" ? OVERRIDES["es-MX"]?.[key] : undefined;
   const base = primary ?? extra ?? esEsFallback ?? STRINGS_EN[key];
-  return applyVars(base, vars);
+  return applyVars(base, { ...mobileStoreTranslationVars(languageId), ...vars });
 }

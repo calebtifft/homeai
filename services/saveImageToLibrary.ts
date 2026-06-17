@@ -18,7 +18,7 @@ export async function saveImageToPhotoLibrary(imageUri: string): Promise<void> {
   if (isRemoteUri(imageUri)) {
     const cacheDir = FileSystem.cacheDirectory;
     if (!cacheDir) {
-      throw new Error("Saving remote images needs the iOS or Android app (not web).");
+      throw new Error("Saving remote images requires the mobile app (not web).");
     }
     const lower = imageUri.split("?")[0]?.toLowerCase() ?? "";
     const ext = lower.endsWith(".png") ? "png" : "jpg";

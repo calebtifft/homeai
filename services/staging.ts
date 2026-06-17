@@ -2071,7 +2071,7 @@ async function copyPickableUriToCacheIfNeeded(localUri: string): Promise<{
   const baseDir = FileSystem.cacheDirectory;
   if (!baseDir) {
     throw new Error(
-      "Cannot read this image path for upload. Try picking the photo again, or use iOS/Android (not web)."
+      "Cannot read this image path for upload. Try picking the photo again, or use the mobile app (not web)."
     );
   }
   const ext = extensionFromUri(localUri);

@@ -45,7 +45,7 @@ export const EXTRA_MISSING_KO: MissingBundle = {
   "subscription.purchasing": "처리 중…",
   "subscription.billingUnavailableTitle": "결제 사용 불가",
   "subscription.billingUnavailableBody":
-    "구독은 공식 App Store 또는 Google Play 빌드에서만 이용할 수 있습니다.",
+    "구독은 공식 {store} 빌드에서만 이용할 수 있습니다.",
   "subscription.loadingPlans": "실시간 요금제 불러오는 중…",
   "subscription.restore": "구매 복원",
   "subscription.restoring": "복원 중…",
@@ -53,7 +53,7 @@ export const EXTRA_MISSING_KO: MissingBundle = {
   "subscription.restoreSuccessBody": "구매가 성공적으로 복원되었습니다.",
   "subscription.restoreNoPurchaseBody": "복원할 활성 구매를 찾을 수 없습니다.",
   "subscription.restoreUnavailableBody":
-    "복원은 iOS 및 Android 빌드에서만 사용할 수 있습니다.",
+    "복원은 {nativeBuild} 빌드에서만 사용할 수 있습니다.",
   "subscription.restoreFailedBody": "구매를 복원할 수 없습니다. 다시 시도해 주세요.",
   "subscription.purchaseSuccessTitle": "구독 활성화됨",
   "subscription.purchaseSuccessBody": "{plan}이(가) 이 기기에서 활성화되었습니다.",
@@ -74,9 +74,9 @@ export const EXTRA_MISSING_KO: MissingBundle = {
   "subscription.manage": "구독 관리",
   "subscription.manageFailedTitle": "구독 설정을 열 수 없음",
   "subscription.manageFailedBody":
-    "App Store 또는 Google Play에서 계정 → 구독으로 이동해 HomeAI를 관리하세요.",
+    "{store}에서 계정 → 구독으로 이동해 HomeAI를 관리하세요.",
   "subscription.manageExpoGoBody":
-    "구독 관리는 App Store 또는 Google Play 앱에서 열립니다. TestFlight 또는 출시 빌드를 사용하세요.",
+    "구독 관리는 {store} 앱에서 열립니다. TestFlight 또는 출시 빌드를 사용하세요.",
   "subscription.switchPlan": "요금제 변경",
   "subscription.leadActive":
     "이 기기에서 요금제가 활성화되어 있습니다. 아래에서 변경하거나 스토어에서 결제를 관리하세요.",
@@ -175,7 +175,7 @@ export const EXTRA_MISSING_JA: MissingBundle = {
   "subscription.purchasing": "処理中…",
   "subscription.billingUnavailableTitle": "課金を利用できません",
   "subscription.billingUnavailableBody":
-    "サブスクは App Store または Google Play の公式ビルドでのみ利用できます。",
+    "サブスクは公式 {store} ビルドでのみ利用できます。",
   "subscription.loadingPlans": "プランを読み込み中…",
   "subscription.restore": "購入を復元",
   "subscription.restoring": "復元中…",
@@ -183,7 +183,7 @@ export const EXTRA_MISSING_JA: MissingBundle = {
   "subscription.restoreSuccessBody": "購入が正常に復元されました。",
   "subscription.restoreNoPurchaseBody": "復元できる有効な購入が見つかりませんでした。",
   "subscription.restoreUnavailableBody":
-    "復元は iOS および Android ビルドでのみ利用できます。",
+    "復元は {nativeBuild} ビルドでのみ利用できます。",
   "subscription.restoreFailedBody": "購入を復元できませんでした。もう一度お試しください。",
   "subscription.purchaseSuccessTitle": "サブスク有効",
   "subscription.purchaseSuccessBody": "{plan} がこの端末で有効になりました。",
@@ -204,9 +204,9 @@ export const EXTRA_MISSING_JA: MissingBundle = {
   "subscription.manage": "サブスクを管理",
   "subscription.manageFailedTitle": "サブスク設定を開けません",
   "subscription.manageFailedBody":
-    "App Store または Google Play のアカウント → サブスクリプションから HomeAI を管理してください。",
+    "{store} のアカウント → サブスクリプションから HomeAI を管理してください。",
   "subscription.manageExpoGoBody":
-    "サブスク管理は App Store または Google Play アプリで開きます。TestFlight または本番ビルドをご利用ください。",
+    "サブスク管理は {store} アプリで開きます。TestFlight または本番ビルドをご利用ください。",
   "subscription.switchPlan": "プランを変更",
   "subscription.leadActive":
     "この端末でプランが有効です。下から変更するか、ストアで請求を管理してください。",
@@ -297,14 +297,14 @@ export const EXTRA_MISSING_ZH_CN: MissingBundle = {
     "在光线好的地方正面拍摄。空间较空选「空房间」，已有软装选「已布置」。",
   "subscription.purchasing": "处理中…",
   "subscription.billingUnavailableTitle": "无法购买",
-  "subscription.billingUnavailableBody": "订阅仅在 App Store 或 Google Play 正式版中可用。",
+  "subscription.billingUnavailableBody": "订阅仅在官方 {store} 版本中可用。",
   "subscription.loadingPlans": "正在加载方案…",
   "subscription.restore": "恢复购买",
   "subscription.restoring": "恢复中…",
   "subscription.restoreTitle": "恢复购买",
   "subscription.restoreSuccessBody": "购买已成功恢复。",
   "subscription.restoreNoPurchaseBody": "未找到可恢复的活跃购买。",
-  "subscription.restoreUnavailableBody": "恢复购买仅适用于 iOS 和 Android 版本。",
+  "subscription.restoreUnavailableBody": "恢复购买仅适用于 {nativeBuild} 版本。",
   "subscription.restoreFailedBody": "无法恢复购买，请重试。",
   "subscription.purchaseSuccessTitle": "订阅已激活",
   "subscription.purchaseSuccessBody": "{plan} 已在此设备上激活。",
@@ -324,9 +324,9 @@ export const EXTRA_MISSING_ZH_CN: MissingBundle = {
   "subscription.manage": "管理订阅",
   "subscription.manageFailedTitle": "无法打开订阅设置",
   "subscription.manageFailedBody":
-    "请在 App Store 或 Google Play 中打开账户 → 订阅，管理 HomeAI。",
+    "请在 {store} 中打开账户 → 订阅，管理 HomeAI。",
   "subscription.manageExpoGoBody":
-    "订阅管理需在 App Store 或 Google Play 应用中打开。请使用 TestFlight 或正式版。",
+    "订阅管理需在 {store} 应用中打开。请使用 TestFlight 或正式版。",
   "subscription.switchPlan": "更换方案",
   "subscription.leadActive":
     "你的方案已在此设备上激活。可在下方更换方案，或在商店中管理账单。",
@@ -415,14 +415,14 @@ export const EXTRA_MISSING_ZH_TW: MissingBundle = {
     "在光線好的地方正面拍攝。空間較空選「空房間」，已有軟裝選「已佈置」。",
   "subscription.purchasing": "處理中…",
   "subscription.billingUnavailableTitle": "無法購買",
-  "subscription.billingUnavailableBody": "訂閱僅在 App Store 或 Google Play 正式版中提供。",
+  "subscription.billingUnavailableBody": "訂閱僅在官方 {store} 版本中提供。",
   "subscription.loadingPlans": "正在載入方案…",
   "subscription.restore": "恢復購買",
   "subscription.restoring": "恢復中…",
   "subscription.restoreTitle": "恢復購買",
   "subscription.restoreSuccessBody": "購買已成功恢復。",
   "subscription.restoreNoPurchaseBody": "找不到可恢復的有效購買。",
-  "subscription.restoreUnavailableBody": "恢復購買僅適用於 iOS 和 Android 版本。",
+  "subscription.restoreUnavailableBody": "恢復購買僅適用於 {nativeBuild} 版本。",
   "subscription.restoreFailedBody": "無法恢復購買，請重試。",
   "subscription.purchaseSuccessTitle": "訂閱已啟用",
   "subscription.purchaseSuccessBody": "{plan} 已在此裝置上啟用。",
@@ -442,9 +442,9 @@ export const EXTRA_MISSING_ZH_TW: MissingBundle = {
   "subscription.manage": "管理訂閱",
   "subscription.manageFailedTitle": "無法開啟訂閱設定",
   "subscription.manageFailedBody":
-    "請在 App Store 或 Google Play 中開啟帳戶 → 訂閱項目，管理 HomeAI。",
+    "請在 {store} 中開啟帳戶 → 訂閱項目，管理 HomeAI。",
   "subscription.manageExpoGoBody":
-    "訂閱管理需在 App Store 或 Google Play 應用程式中開啟。請使用 TestFlight 或正式版。",
+    "訂閱管理需在 {store} 應用程式中開啟。請使用 TestFlight 或正式版。",
   "subscription.switchPlan": "更換方案",
   "subscription.leadActive":
     "你的方案已在此裝置上啟用。可在下方更換方案，或在商店中管理帳單。",
